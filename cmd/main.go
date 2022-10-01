@@ -45,5 +45,9 @@ func main() {
 	if err != nil {
 		logger.Panic(err)
 	}
-	time.Sleep(60 * time.Second)
+	client.Refresh(true)
+	for {
+		time.Sleep(10 * time.Second)
+		client.Refresh(false)
+	}
 }

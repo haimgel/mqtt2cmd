@@ -2,13 +2,15 @@ package controls
 
 import (
 	"os/exec"
+	"time"
 )
 
 type Switch struct {
-	Name     string `mapstructure:"name"`
-	OnCmd    string `mapstructure:"turn_on"`
-	OffCmd   string `mapstructure:"turn_off"`
-	StateCmd string `mapstructure:"get_state"`
+	Name            string        `mapstructure:"name"`
+	OnCmd           string        `mapstructure:"turn_on"`
+	OffCmd          string        `mapstructure:"turn_off"`
+	StateCmd        string        `mapstructure:"get_state"`
+	RefreshInterval time.Duration `mapstructure:"refresh"`
 }
 
 func (sw *Switch) SwitchOnOff(state bool) (string, error) {

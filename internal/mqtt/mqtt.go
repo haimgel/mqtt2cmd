@@ -7,18 +7,25 @@ import (
 	"github.com/haimgel/mqtt-buttons/internal/controls"
 	"go.uber.org/zap"
 	"math/rand"
+	"time"
 )
 
 const OnPayload = "ON"
 const OffPayload = "OFF"
 
+type Switch struct {
+	control     controls.Switch
+	state       bool
+	lastRefresh time.Time
+}
+
 type Client struct {
 	handle   MQTT.Client
-	switches []controls.Switch
+	switches []*Switch
 	logger   *zap.SugaredLogger
 }
 
-func Connect(config *config.MqttConfig, switches []controls.Switch, logger *zap.SugaredLogger) (*Client, error) {
+func Connect(config *config.MqttConfig, controls []controls.Switch, logger *zap.SugaredLogger) (*Client, error) {
 	opts := MQTT.NewClientOptions()
 	opts.AddBroker(config.Broker)
 	opts.SetOrderMatters(false)
@@ -32,6 +39,10 @@ func Connect(config *config.MqttConfig, switches []controls.Switch, logger *zap.
 		return nil, token.Error()
 	}
 	logger.Infow("Connected to MQTT", "broker", config.Broker)
+	switches := make([]*Switch, len(controls))
+	for i, control := range controls {
+		switches[i] = &Switch{control: control}
+	}
 	return &Client{handle: client, switches: switches, logger: logger}, nil
 }
 
@@ -52,15 +63,15 @@ func (client *Client) Subscribe() error {
 	return nil
 }
 
-func (client *Client) processSetPayload(sw controls.Switch, payload string) {
-	logger := client.logger.With(zap.String("switch", sw.Name))
+func (client *Client) processSetPayload(sw *Switch, payload string) {
+	logger := client.logger.With(zap.String("switch", sw.control.Name))
 	logger.Infow("Received switch command", "payload", payload)
 	command, err := parsePayload(payload)
 	if err != nil {
 		logger.Error(err)
 		return
 	}
-	response, err := sw.SwitchOnOff(command)
+	response, err := sw.control.SwitchOnOff(command)
 	if err != nil {
 		logger.Errorw("Error running switch command", "error", err, "output", response)
 		return
@@ -69,14 +80,28 @@ func (client *Client) processSetPayload(sw controls.Switch, payload string) {
 	client.setState(sw, command)
 }
 
-func (client *Client) setState(sw controls.Switch, state bool) {
-	logger := client.logger.With(zap.String("switch", sw.Name))
-	token := client.handle.Publish(stateTopic(sw), 1, true, generatePayload(state))
+func (client *Client) Refresh(force bool) {
+	for _, sw := range client.switches {
+		if force || (sw.control.RefreshInterval != 0 && time.Now().After(sw.lastRefresh.Add(sw.control.RefreshInterval))) {
+			newState := sw.control.GetState()
+			sw.lastRefresh = time.Now()
+			if force || (newState != sw.state) {
+				client.setState(sw, newState)
+			}
+		}
+	}
+}
+
+func (client *Client) setState(sw *Switch, state bool) {
+	topic := stateTopic(sw)
+	logger := client.logger.With(zap.String("switch", sw.control.Name), zap.Bool("state", state), zap.String("topic", topic))
+	token := client.handle.Publish(topic, 1, true, generatePayload(state))
 	token.Wait()
 	if token.Error() != nil {
 		logger.Error("Error publishing state to MQTT", "error", token.Error())
 		return
 	}
+	sw.state = state
 	logger.Debugw("Published state to MQTT")
 }
 
@@ -98,10 +123,10 @@ func generatePayload(state bool) string {
 	}
 }
 
-func commandTopic(sw controls.Switch) string {
-	return fmt.Sprintf("%s/switches/%s/set", config.AppName, sw.Name)
+func commandTopic(sw *Switch) string {
+	return fmt.Sprintf("%s/switches/%s/set", config.AppName, sw.control.Name)
 }
 
-func stateTopic(sw controls.Switch) string {
-	return fmt.Sprintf("%s/switches/%s", config.AppName, sw.Name)
+func stateTopic(sw *Switch) string {
+	return fmt.Sprintf("%s/switches/%s", config.AppName, sw.control.Name)
 }

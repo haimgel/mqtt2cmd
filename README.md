@@ -15,15 +15,16 @@ mqtt:
   broker: "tcp://your-mqtt-server-address:1883"
 switches:
   - name: lunch
+    # How often to run the `get_state` command and update the state: useful if the state changes by means
+    # other than this application
+    refresh: "10m"
+    # A command to turn the switch on
     turn_on: "slack_status lunch"
+    # A command to turn the switch off
     turn_off: "slack_status clear"
+    # A command to query the state of the switch: exit status = 0 is "ON", exit status = 1 is "OFF"
     get_state: "slack_status --get lunch"
 ```
 
-For each exposed "switch", three commands (optionally with parameters) are expected:
-* To turn the switch on
-* To turn the switch off
-* To query the state of the switch: exit status = 0 is "ON", exit status = 1 is "OFF"
-
 Using the configuration above, `mqtt2cmd` will subscribe to MQTT topic `mqtt2cmd/switches/lunch/set` and will
-publish the currnent state to `mqtt2cmd/switches/lunch`
+publish the current state to `mqtt2cmd/switches/lunch`
