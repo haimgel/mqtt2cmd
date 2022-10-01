@@ -1,0 +1,53 @@
+before:
+  hooks:
+    - go mod tidy
+    - go generate ./...
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    main: ./cmd/main.go
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      386: i386
+      amd64: x86_64
+universal_binaries:
+  - replace: true
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+release:
+  github:
+    owner: haimgel
+    name: mqtt2cmd
+brews:
+  - tap:
+      owner: haimgel
+      name: homebrew-tools
+    name: mqtt2cmd
+    homepage: "https://github.com/haimgel/mqtt2cmd"
+    description: "MQTT to command-line applications gateway."
+    folder: Formula
+    install: |
+      bin.install "mqtt2cmd"
+    service: |
+      run: mqtt2cmd
+    test: |
+      assert_match /help string/, shell_output("#{bin}/mqtt2cmd -h", 0)
+
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
