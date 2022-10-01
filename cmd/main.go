@@ -31,21 +31,17 @@ func main() {
 	logger := createLogger()
 	// noinspection GoUnhandledErrorResult
 	defer logger.Sync()
+
 	appConfig, err := config.Load()
 	if err != nil {
 		logger.Panic(err)
 	}
 	logger.Infow("Application started", "config_file", viper.ConfigFileUsed())
-	client, err := mqtt.Connect(&appConfig.Mqtt, appConfig.Switches, logger)
+
+	client, err := mqtt.Init(&appConfig.Mqtt, appConfig.Switches, logger)
 	if err != nil {
 		logger.Panic(err)
 	}
-	logger.Infow("Connected to MQTT", "client", client)
-	err = client.Subscribe()
-	if err != nil {
-		logger.Panic(err)
-	}
-	client.Refresh(true)
 	for {
 		time.Sleep(10 * time.Second)
 		client.Refresh(false)

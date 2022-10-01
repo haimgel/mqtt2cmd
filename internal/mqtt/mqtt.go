@@ -25,6 +25,20 @@ type Client struct {
 	logger   *zap.SugaredLogger
 }
 
+func Init(config *config.MqttConfig, controls []controls.Switch, logger *zap.SugaredLogger) (*Client, error) {
+	client, err := Connect(config, controls, logger)
+	if err != nil {
+		return nil, err
+	}
+	err = client.Subscribe()
+	if err != nil {
+		client.handle.Disconnect(0)
+		return nil, err
+	}
+	client.Refresh(true)
+	return client, nil
+}
+
 func Connect(config *config.MqttConfig, controls []controls.Switch, logger *zap.SugaredLogger) (*Client, error) {
 	opts := MQTT.NewClientOptions()
 	opts.AddBroker(config.Broker)
