@@ -41,7 +41,6 @@ func Init(appName string, config *config.MqttConfig, controls []controls.Switch,
 		client.handle.Disconnect(0)
 		return nil, err
 	}
-	client.setAppAvailable()
 	return client, nil
 }
 
@@ -55,6 +54,10 @@ func Connect(appName string, config *config.MqttConfig, controls []controls.Swit
 		opts.SetUsername(*config.User)
 		opts.SetPassword(*config.Password)
 	}
+	opts.SetOnConnectHandler(func(client MQTT.Client) {
+		// This has to be in the on-connection handler, to make sure we mark ourselves as "available" upon reconnect
+		setAppAvailable(client, appName, logger)
+	})
 	client := MQTT.NewClient(opts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
 		return nil, token.Error()
@@ -165,10 +168,10 @@ func (client *Client) setAvailable(sw *Switch, available bool) {
 	logger.Debugw("Published availability to MQTT")
 }
 
-func (client *Client) setAppAvailable() {
-	topic := appAvailabilityTopic(client.appName)
-	logger := client.logger.With(zap.String("topic", topic))
-	token := client.handle.Publish(topic, 1, false, generateAvailablePayload(true))
+func setAppAvailable(client MQTT.Client, appName string, appLogger *zap.SugaredLogger) {
+	topic := appAvailabilityTopic(appName)
+	logger := appLogger.With(zap.String("topic", topic))
+	token := client.Publish(topic, 1, true, generateAvailablePayload(true))
 	token.Wait()
 	if token.Error() != nil {
 		logger.Error("Error publishing application availability to MQTT", "error", token.Error())
