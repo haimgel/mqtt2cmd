@@ -1,4 +1,7 @@
 # MQTT to command-line applications gateway
+[![Release](https://img.shields.io/github/release/haimgel/mqtt2cmd.svg?style=flat)](https://github.com/haimgel/mqtt2cmd/releases/latest)
+[![Software license](https://img.shields.io/github/license/haimgel/mqtt2cmd.svg?style=flat)](/LICENSE)
+[![Build status](https://img.shields.io/github/workflow/status/haimgel/mqtt2cmd/release.svg?style=flat)](https://github.com/haimgel/mqtt2cmd/actions?workflow=release)
 
 Create virtual MQTT switches from command-line applications. Expose apps running locally on your laptop or desktop to
 your home automation server, like [Home Assistant](https://home-assistant.io). 
@@ -9,20 +12,20 @@ your home automation server, like [Home Assistant](https://home-assistant.io).
 
 ```bash
 # Add tap to your Homebrew
-$ brew tap haimgel/tools
+brew tap haimgel/tools
 
 # Install it
-$ brew install mqtt2cmd
+brew install mqtt2cmd
 
 # Configure (see below for details)
-$ mkdir -p ~/Library/Application\ Support/mqtt2cmd
-$ vi ~/Library/Application\ Support/mqtt2cmd/config.yaml
+mkdir -p ~/Library/Application\ Support/mqtt2cmd
+vi ~/Library/Application\ Support/mqtt2cmd/config.yaml
 
 # Run it in the background, autostart upon boot
-$ brew services start mqtt2cmd
+brew services start mqtt2cmd
 
 # View the logs
-$ tail -f ~/Library/Application\ Support/mqtt2cmd/mqtt2cmd.log
+tail -f ~/Library/Application\ Support/mqtt2cmd/mqtt2cmd.log
 ```
 
 # Configuration
@@ -54,9 +57,11 @@ Using the configuration above, `mqtt2cmd` will:
 1. Subscribe to MQTT topic `laptop/switches/lunch/set`
 2. Publish the current state to `laptop/switches/lunch`
 3. Publish overall application availability to `laptop/available`
-4. Publish switch availability to `laptop/switches/lunch/available` (will be marked offline if the commands could not be executed successfully)
+4. Publish switch availability to `laptop/switches/lunch/available` (will be marked offline if the commands could not be executed successfully).
 
-## Sample Home Assistant configuration to control the switch (as configured above)
+## Sample Home Assistant configuration
+Assuming `mqtt2cmd` is configured as above, the following Home Assistant configuration
+will allow to control the virtual "switch" and expose its status and availability.
 
 ```yaml
 mqtt:
