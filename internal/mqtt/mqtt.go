@@ -3,8 +3,8 @@ package mqtt
 import (
 	"fmt"
 	MQTT "github.com/eclipse/paho.mqtt.golang"
-	"github.com/haimgel/mqtt-buttons/internal/config"
-	"github.com/haimgel/mqtt-buttons/internal/controls"
+	"github.com/haimgel/mqtt2cmd/internal/config"
+	"github.com/haimgel/mqtt2cmd/internal/controls"
 	"go.uber.org/zap"
 	"math/rand"
 	"time"

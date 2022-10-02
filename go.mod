@@ -1,4 +1,4 @@
-module github.com/haimgel/mqtt-buttons
+module github.com/haimgel/mqtt2cmd
 
 go 1.18
 

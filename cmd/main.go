@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/haimgel/mqtt-buttons/internal/config"
-	"github.com/haimgel/mqtt-buttons/internal/logging"
-	"github.com/haimgel/mqtt-buttons/internal/mqtt"
+	"github.com/haimgel/mqtt2cmd/internal/config"
+	"github.com/haimgel/mqtt2cmd/internal/logging"
+	"github.com/haimgel/mqtt2cmd/internal/mqtt"
 	"github.com/spf13/viper"
 	"time"
 )
