@@ -11,7 +11,12 @@ builds:
     goarch:
       - amd64
       - arm64
-    main: ./cmd/main.go
+    mod_timestamp: '{{ .CommitTimestamp }}'
+    flags:
+      - -trimpath
+    ldflags:
+      # Disables debug symbols (-s, -w), passes version information
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate }}
 archives:
   - replacements:
       darwin: Darwin

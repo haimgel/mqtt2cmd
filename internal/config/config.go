@@ -29,8 +29,8 @@ type ApplicationConfig struct {
 }
 
 // Load configuration from command-line options, config file, and environment variables
-func Load() (*ApplicationConfig, error) {
-	processCommandLineArguments()
+func Load(version string, exit func(int), args []string) (*ApplicationConfig, error) {
+	processCommandLineArguments(version, exit, args)
 
 	err := viper.BindPFlags(pflag.CommandLine)
 	if err != nil {
@@ -61,14 +61,19 @@ func Load() (*ApplicationConfig, error) {
 	return &config, nil
 }
 
-func processCommandLineArguments() {
+func processCommandLineArguments(versionStr string, exit func(int), args []string) {
 	pflag.StringP("mqtt.broker", "b", "", "MQTT broker (example \"tcp://hostname:1883\")")
 	pflag.StringP("log.path", "l", defaultLogFile(), "Log file path")
-	help := pflag.BoolP("help", "h", false, "")
-	pflag.Parse()
-	if *help {
+	helpFlag := pflag.BoolP("help", "h", false, "This help message")
+	versionFlag := pflag.BoolP("version", "v", false, "Show version")
+	_ = pflag.CommandLine.Parse(args)
+	if *helpFlag {
 		pflag.Usage()
-		os.Exit(2)
+		exit(2)
+	}
+	if *versionFlag {
+		fmt.Printf("%s version %s\n", AppName, versionStr)
+		exit(0)
 	}
 }
 

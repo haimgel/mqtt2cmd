@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"github.com/haimgel/mqtt2cmd/internal/config"
@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-func main() {
-	appConfig, err := config.Load()
+func Execute(version string, exit func(int), args []string) {
+	appConfig, err := config.Load(version, exit, args)
 	if err != nil {
 		panic(err)
 	}
