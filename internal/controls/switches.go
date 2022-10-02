@@ -21,9 +21,17 @@ func (sw *Switch) SwitchOnOff(state bool) (string, error) {
 	}
 }
 
-func (sw *Switch) GetState() bool {
-	_, err := run(sw.StateCmd)
-	return err == nil
+func (sw *Switch) GetState() (bool, string, error) {
+	out, err := run(sw.StateCmd)
+	if exitError, ok := err.(*exec.ExitError); ok {
+		if exitError.ExitCode() == 1 {
+			return false, out, nil
+		} else {
+			return false, out, err
+		}
+	} else {
+		return err == nil, out, err
+	}
 }
 
 func run(command string) (string, error) {

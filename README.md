@@ -33,6 +33,8 @@ This application expects a configuration file named `config.yaml`, located in:
 
 Sample configuration (controls Slack status across multiple Slack workspaces using [slack_status](https://github.com/haimgel/slack_status))
 ```yaml
+# Application ID is the prefix for all MQTT topics this app subscribes and publishes to. Defaults to mqtt2cmd
+app-id: 'laptop'
 mqtt:
   broker: "tcp://your-mqtt-server-address:1883"
 switches:
@@ -48,5 +50,23 @@ switches:
     get_state: "slack_status --get lunch"
 ```
 
-Using the configuration above, `mqtt2cmd` will subscribe to MQTT topic `mqtt2cmd/switches/lunch/set` and will
-publish the current state to `mqtt2cmd/switches/lunch`
+Using the configuration above, `mqtt2cmd` will:
+1. Subscribe to MQTT topic `laptop/switches/lunch/set`
+2. Publish the current state to `laptop/switches/lunch`
+3. Publish overall application availability to `laptop/available`
+4. Publish switch availability to `laptop/switches/lunch/available` (will be marked offline if the commands could not be executed successfully)
+
+## Sample Home Assistant configuration to control the switch (as configured above)
+
+```yaml
+mqtt:
+  switch:
+    - name: "Slack 'Lunch' status"
+      icon: 'mdi:hamburger'
+      state_topic: 'laptop/switches/lunch'
+      command_topic: 'laptop/switches/lunch/set'
+      availability:
+        - topic: 'laptop/available'
+        - topic: 'laptop/switches/lunch/available'
+      availability_mode: 'all'
+```

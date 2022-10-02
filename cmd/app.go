@@ -19,12 +19,12 @@ func Execute(version string, exit func(int), args []string) {
 	defer logger.Sync()
 	logger.Infow("Application started", "config_file", viper.ConfigFileUsed())
 
-	client, err := mqtt.Init(&appConfig.Mqtt, appConfig.Switches, logger)
+	client, err := mqtt.Init(appConfig.AppId, &appConfig.Mqtt, appConfig.Switches, logger)
 	if err != nil {
 		logger.Panic(err)
 	}
 	for {
+		client.Refresh()
 		time.Sleep(10 * time.Second)
-		client.Refresh(false)
 	}
 }

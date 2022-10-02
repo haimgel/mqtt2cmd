@@ -23,6 +23,7 @@ type LoggerConfig struct {
 }
 
 type ApplicationConfig struct {
+	AppId        string            `mapstructure:"app-id"`
 	Mqtt         MqttConfig        `mapstructure:"mqtt"`
 	Switches     []controls.Switch `mapstructure:"switches"`
 	LoggerConfig LoggerConfig      `mapstructure:"log"`
@@ -48,6 +49,7 @@ func Load(version string, exit func(int), args []string) (*ApplicationConfig, er
 	viper.SetConfigType("yaml")
 	viper.SetConfigName("config")
 	viper.AddConfigPath(configDir)
+	viper.SetDefault("app-id", AppName)
 	err = viper.ReadInConfig()
 	if err != nil {
 		return nil, err
@@ -62,7 +64,7 @@ func Load(version string, exit func(int), args []string) (*ApplicationConfig, er
 }
 
 func processCommandLineArguments(versionStr string, exit func(int), args []string) {
-	pflag.StringP("mqtt.broker", "b", "", "MQTT broker (example \"tcp://hostname:1883\")")
+	pflag.StringP("mqtt.broker", "b", "tcp://localhost:1883", "MQTT broker")
 	pflag.StringP("log.path", "l", defaultLogFile(), "Log file path")
 	helpFlag := pflag.BoolP("help", "h", false, "This help message")
 	versionFlag := pflag.BoolP("version", "v", false, "Show version")
