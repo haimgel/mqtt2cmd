@@ -32,5 +32,5 @@ func CreateLogger(logFile string) *zap.SugaredLogger {
 		zap.AddStacktrace(zap.ErrorLevel),
 		zap.WithCaller(false),
 	)
-	return logger.Sugar()
+	return logger.Sugar().With(zap.Int("pid", os.Getpid()))
 }
