@@ -78,6 +78,7 @@ func (client *Client) Subscribe() error {
 }
 
 func (client *Client) processSetPayload(sw *Switch, payload string) {
+	defer client.syncLog()
 	logger := client.logger.With(zap.String("switch", sw.control.Name))
 	logger.Infow("Received switch command", "payload", payload)
 	command, err := parsePayload(payload)
@@ -95,6 +96,7 @@ func (client *Client) processSetPayload(sw *Switch, payload string) {
 }
 
 func (client *Client) Refresh(force bool) {
+	defer client.syncLog()
 	for _, sw := range client.switches {
 		if force || (sw.control.RefreshInterval != 0 && time.Now().After(sw.lastRefresh.Add(sw.control.RefreshInterval))) {
 			newState := sw.control.GetState()
@@ -143,4 +145,9 @@ func commandTopic(sw *Switch) string {
 
 func stateTopic(sw *Switch) string {
 	return fmt.Sprintf("%s/switches/%s", config.AppName, sw.control.Name)
+}
+
+func (client *Client) syncLog() {
+	// noinspection GoUnhandledErrorResult
+	defer client.logger.Sync()
 }

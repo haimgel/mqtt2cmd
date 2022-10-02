@@ -45,9 +45,9 @@ brews:
     install: |
       bin.install "mqtt2cmd"
     service: |
-      run: mqtt2cmd
+      run [opt_bin/"mqtt2cmd"]
     test: |
-      assert_match /help string/, shell_output("#{bin}/mqtt2cmd -h", 0)
+      assert_match /Usage of/, shell_output("#{bin}/mqtt2cmd -h", 0)
 
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
