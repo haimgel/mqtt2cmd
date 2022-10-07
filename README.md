@@ -34,7 +34,7 @@ This application expects a configuration file named `config.yaml`, located in:
 * `$HOME/Library/Application Support/mqtt2cmd` on MacOS
 * `$XDG_CONFIG_HOME/mqtt2cmd` or `$HOME/.config/mqtt2cmd` on Linux
 
-Sample configuration (controls Slack status across multiple Slack workspaces using [slack_status](https://github.com/haimgel/slack_status))
+Sample configuration (controls Slack status across multiple Slack workspaces using [slack-status](https://github.com/haimgel/slack-status-go))
 ```yaml
 # Application ID is the prefix for all MQTT topics this app subscribes and publishes to. Defaults to mqtt2cmd
 app-id: 'laptop'
@@ -46,11 +46,11 @@ switches:
     # other than this application
     refresh: "10m"
     # A command to turn the switch on
-    turn_on: "slack_status lunch"
+    turn_on: "/opt/homebrew/bin/slack-status set lunch"
     # A command to turn the switch off
-    turn_off: "slack_status clear"
+    turn_off: "/opt/homebrew/bin/slack-status clear"
     # A command to query the state of the switch: exit status = 0 is "ON", exit status = 1 is "OFF"
-    get_state: "slack_status --get lunch"
+    get_state: "/opt/homebrew/bin/slack-status -u myteam get lunch"
 ```
 
 Using the configuration above, `mqtt2cmd` will:
