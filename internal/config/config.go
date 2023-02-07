@@ -42,13 +42,7 @@ func Load(version string, exit func(int), args []string) (*ApplicationConfig, er
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 
-	configDir, err := defaultConfigHome()
-	if err != nil {
-		return nil, err
-	}
-	viper.SetConfigType("yaml")
-	viper.SetConfigName("config")
-	viper.AddConfigPath(configDir)
+	viper.SetConfigFile(viper.GetString("config"))
 	viper.SetDefault("app-id", AppName)
 	err = viper.ReadInConfig()
 	if err != nil {
@@ -64,6 +58,7 @@ func Load(version string, exit func(int), args []string) (*ApplicationConfig, er
 }
 
 func processCommandLineArguments(versionStr string, exit func(int), args []string) {
+	pflag.StringP("config", "c", defaultConfigFile(), "Configuration file path")
 	pflag.StringP("mqtt.broker", "b", "tcp://localhost:1883", "MQTT broker")
 	pflag.StringP("log.path", "l", defaultLogFile(), "Log file path")
 	helpFlag := pflag.BoolP("help", "h", false, "This help message")
@@ -81,11 +76,15 @@ func processCommandLineArguments(versionStr string, exit func(int), args []strin
 
 func defaultConfigHome() (string, error) {
 	cfgDir, err := os.UserConfigDir()
-	if err != nil {
-		return "", err
-	}
-	err = os.MkdirAll(cfgDir, 0750)
 	return filepath.Join(cfgDir, AppName), err
+}
+
+func defaultConfigFile() string {
+	configDir, err := defaultConfigHome()
+	if err != nil {
+		return ""
+	}
+	return filepath.Join(configDir, "config.yaml")
 }
 
 func defaultLogFile() string {
