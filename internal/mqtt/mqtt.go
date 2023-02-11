@@ -79,7 +79,8 @@ func (client *Client) generateClientId() string {
 }
 
 func (client *Client) Subscribe() error {
-	for _, sw := range client.switches {
+	for _, el := range client.switches {
+		sw := el // Capture the switch, so we're using the right one down below in the subscription block
 		topic := client.commandTopic(sw)
 		client.logger.Debugw("Subscribing", "topic", topic)
 		if token := client.handle.Subscribe(topic, 1, func(mqttClient MQTT.Client, message MQTT.Message) {
