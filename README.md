@@ -1,7 +1,7 @@
 # MQTT to command-line applications gateway
 [![Release](https://img.shields.io/github/release/haimgel/mqtt2cmd.svg?style=flat)](https://github.com/haimgel/mqtt2cmd/releases/latest)
 [![Software license](https://img.shields.io/github/license/haimgel/mqtt2cmd.svg?style=flat)](/LICENSE)
-[![Build status](https://img.shields.io/github/workflow/status/haimgel/mqtt2cmd/release.svg?style=flat)](https://github.com/haimgel/mqtt2cmd/actions?workflow=release)
+[![Build status](https://img.shields.io/github/actions/workflow/status/haimgel/mqtt2cmd/release.yaml?style=flat)](https://github.com/haimgel/mqtt2cmd/actions?workflow=release)
 
 Create virtual MQTT switches from command-line applications. Expose apps running locally on your laptop or desktop to
 your home automation server, like [Home Assistant](https://home-assistant.io). 
