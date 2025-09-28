@@ -1,0 +1,99 @@
+version: 2
+# Reference: https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference
+
+updates:
+  # Update Go modules
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "haimgel"
+    assignees:
+      - "haimgel"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    groups:
+      # Group major version updates for better review
+      go-major-updates:
+        patterns:
+          - "major"
+        update-types:
+          - "version-update:semver-major"
+      # Group minor and patch updates for automatic merging
+      go-minor-patch-updates:
+        patterns:
+          - "minor"
+          - "patch"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
+    ignore:
+      # Ignore pre-release versions for stability
+      - dependency-name: "*"
+        update-types: ["version-update:semver-pre"]
+
+  # Update Docker dependencies
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "haimgel"
+    assignees:
+      - "haimgel"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    groups:
+      # Group Docker base image updates
+      docker-base-images:
+        patterns:
+          - "alpine"
+          - "golang"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
+    ignore:
+      # Only ignore pre-releases for Docker images
+      - dependency-name: "*"
+        update-types: ["version-update:semver-pre"]
+
+  # Update GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "haimgel"
+    assignees:
+      - "haimgel"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    groups:
+      # Group GitHub Actions updates for easier batch merging
+      github-actions-updates:
+        patterns:
+          - "actions/*"
+          - "docker/*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
+    ignore:
+      # Ignore pre-release versions for stability
+      - dependency-name: "*"
+        update-types: ["version-update:semver-pre"]
+
