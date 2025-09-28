@@ -19,7 +19,7 @@ jobs:
         uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a #v6.4.0
         with:
           distribution: goreleaser
-          version: 1.21.2
+          version: 2.12.3
           args: release --clean
         env:
           # This needs write access to the brew tap repo
