@@ -8,6 +8,9 @@ jobs:
   goreleaser:
     if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && startsWith(github.event.workflow_run.ref, 'refs/tags/') }}
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      attestations: write
     steps:
       - name: Checkout triggering commit
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #v5.0.0
@@ -27,3 +30,8 @@ jobs:
         env:
           # This needs write access to the brew tap repo
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+
+      - name: Generate build attestation for artifacts
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a #v3.0.0
+        with:
+          subject-path: ./dist/checksums.txt
