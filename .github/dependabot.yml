@@ -24,15 +24,15 @@ updates:
         patterns:
           - "major"
         update-types:
-          - "version-update:semver-major"
+          - "major"
       # Group minor and patch updates for automatic merging
       go-minor-patch-updates:
         patterns:
           - "minor"
           - "patch"
         update-types:
-          - "version-update:semver-minor"
-          - "version-update:semver-patch"
+          - "minor"
+          - "patch"
     ignore:
       # Ignore pre-release versions for stability
       - dependency-name: "*"
@@ -60,9 +60,9 @@ updates:
           - "alpine"
           - "golang"
         update-types:
-          - "version-update:semver-major"
-          - "version-update:semver-minor"
-          - "version-update:semver-patch"
+          - "major"
+          - "minor"
+          - "patch"
     ignore:
       # Only ignore pre-releases for Docker images
       - dependency-name: "*"
@@ -90,9 +90,9 @@ updates:
           - "actions/*"
           - "docker/*"
         update-types:
-          - "version-update:semver-major"
-          - "version-update:semver-minor"
-          - "version-update:semver-patch"
+          - "major"
+          - "minor"
+          - "patch"
     ignore:
       # Ignore pre-release versions for stability
       - dependency-name: "*"
