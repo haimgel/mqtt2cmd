@@ -9,7 +9,6 @@ updates:
       - "haimgel"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
     commit-message:
       prefix: "deps"
     cooldown:
@@ -28,11 +27,14 @@ updates:
       - "haimgel"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
     commit-message:
       prefix: "deps"
     cooldown:
       default-days: 7
+    groups:
+      github-actions:
+        patterns:
+          - "*"
     labels:
       - "dependencies"
 
@@ -42,10 +44,13 @@ updates:
       - "haimgel"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
     cooldown:
       default-days: 7
     commit-message:
       prefix: "ci"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
     labels:
       - "dependencies"
