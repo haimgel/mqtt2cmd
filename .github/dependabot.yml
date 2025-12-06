@@ -8,7 +8,7 @@ updates:
     assignees:
       - "haimgel"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     commit-message:
       prefix: "deps"
     cooldown:
@@ -26,7 +26,7 @@ updates:
     assignees:
       - "haimgel"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     commit-message:
       prefix: "deps"
     cooldown:
@@ -43,7 +43,7 @@ updates:
     assignees:
       - "haimgel"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     cooldown:
       default-days: 7
     commit-message:
